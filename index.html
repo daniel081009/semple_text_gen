@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Text Gen</title>
+  </head>
+  <body>
+    <h1>Text Gen</h1>
+    <div class="testww">
+      <textarea id="text">
+단락 구분은 이렇게 합니다.
+<>
+이렇게요.
+<>
+그래서 자연스럽게 문장을 하나로 합치는 AI입니다.
+</textarea
+      >
+      <textarea id="output"></textarea>
+    </div>
+    <button id="gen" onclick="gen()">생성</button>
+  </body>
+  <script>
+    function gen() {
+      let text = document.getElementById("text").value;
+      fetch(`https://api.openai.com/v1/chat/completions`, {
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content: `너는 문장 합치는 AI야.쳐야해 단락들은 <> 로 구분한다. 중복되는 내용은 필수적으로 쓴다. 그리고 단어를 바꿔서 사용해, 문맥도 바꿔 사용해. 그리고 맞춤법을 맞춰주줘야 된다. 것입니다 쓰지마`,
+            },
+            { role: "user", content: document.getElementById("text").value },
+          ],
+          temperature: 0.3,
+          max_tokens: 2000,
+        }),
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + "api key",
+        },
+      }).then((response) => {
+        console.log(response);
+        if (response.ok) {
+          response.json().then((json) => {
+            console.log(json);
+            console.log(json.choices[0].message.content);
+            document.getElementById("output").value =
+              json.choices[0].message.content;
+          });
+        }
+      });
+    }
+  </script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-flow: column;
+    }
+    #help {
+      font-size: 15px;
+    }
+    .testww {
+      display: flex;
+      flex-flow: row;
+    }
+    textarea {
+      width: 50vh;
+      height: 80vh;
+      font-size: 20px;
+      margin: 10px;
+      resize: none;
+    }
+    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap");
+
+    :root {
+      --button-color: #ffffff;
+      --button-bg-color: #0d6efd;
+      --button-hover-bg-color: #025ce2;
+    }
+
+    button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+
+      background: var(--button-bg-color);
+      color: var(--button-color);
+
+      margin: 0;
+      padding: 0.5rem 1rem;
+
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+      text-align: center;
+      text-decoration: none;
+
+      border: none;
+      border-radius: 4px;
+
+      display: inline-block;
+      width: auto;
+
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+      cursor: pointer;
+
+      transition: 0.5s;
+    }
+
+    button.success {
+      --button-bg-color: #28a745;
+      --button-hover-bg-color: #218838;
+    }
+
+    button.error {
+      --button-bg-color: #dc3545;
+      --button-hover-bg-color: #c82333;
+    }
+
+    button.warning {
+      --button-color: #212529;
+      --button-bg-color: #ffc107;
+      --button-hover-bg-color: #e0a800;
+    }
+
+    button:active,
+    button:hover,
+    button:focus {
+      background: var(--button-hover-bg-color);
+      outline: 0;
+    }
+    button:disabled {
+      opacity: 0.5;
+    }
+
+    form {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 100vh;
+    }
+    h1 {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 50px;
+      font-weight: 400;
+      text-align: center;
+      text-decoration: none;
+    }
+  </style>
+</html>
